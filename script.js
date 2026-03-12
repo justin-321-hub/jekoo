@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const submitBtn = document.getElementById('submit-btn');
     
     // ★ 1. 填入你在 n8n Webhook 節點取得的 URL ★
-    const n8nWebhookUrl = "https://n8n-service-dnng.onrender.com/webhook-test/contact"; 
+    const n8nWebhookUrl = "https://n8n-service-dnng.onrender.com/webhook/contact"; 
     
     if(contactForm) {
         contactForm.addEventListener('submit', function(e) {
@@ -122,6 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+
 
 
 
