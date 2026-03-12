@@ -121,8 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     }
-    }
-
 });
+
 
 
