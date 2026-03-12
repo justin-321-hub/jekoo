@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     // ★ 請將這裡換成你在 Formspree 註冊後取得的 Endpoint URL ★
     // 例如: "https://formspree.io/f/xyzababc"
-    const formspreeEndpoint = "填入你的_Formspree_API_網址"; 
+    const formspreeEndpoint = "https://formspree.io/f/xnjgdebp"; 
     
     if(contactForm) {
         contactForm.addEventListener('submit', function(e) {
@@ -92,7 +92,7 @@ document.addEventListener("DOMContentLoaded", () => {
             formData.append("需求說明", message);
 
             // 如果你還沒有設定 Formspree，這段會只跳出提示並清空表單
-            if (formspreeEndpoint === "https://formspree.io/f/xnjgdebp") {
+            if (formspreeEndpoint === "填入你的_Formspree_API_網址") {
                 setTimeout(() => {
                     alert(`【展示模式】感謝 ${contactName} 的詢問！這封信預計會寄到 jekoo.intelligent@gmail.com。請開發者記得替換 API 網址！`);
                     submitBtn.innerText = originalBtnText;
@@ -125,4 +125,5 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     }
+
 });
