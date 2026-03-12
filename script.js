@@ -46,13 +46,12 @@ document.addEventListener("DOMContentLoaded", () => {
         observer.observe(el);
     });
 
-    // 3. 聯絡表單防呆與發送 (支援 Formspree 等第三方 API)
+    // 3. 聯絡表單防呆與發送 (串接 n8n Webhook)
     const contactForm = document.getElementById('contact-form');
     const submitBtn = document.getElementById('submit-btn');
     
-    // ★ 請將這裡換成你在 Formspree 註冊後取得的 Endpoint URL ★
-    // 例如: "https://formspree.io/f/xyzababc"
-    const formspreeEndpoint = "https://formspree.io/f/xnjgdebp"; 
+    // ★ 1. 填入你在 n8n Webhook 節點取得的 URL ★
+    const n8nWebhookUrl = "https://n8n-service-dnng.onrender.com/webhook/contact"; 
     
     if(contactForm) {
         contactForm.addEventListener('submit', function(e) {
@@ -80,50 +79,49 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // 變更按鈕狀態為處理中
             const originalBtnText = submitBtn.innerText;
-            submitBtn.innerText = "發送中...";
+            submitBtn.innerText = "資料傳送中...";
             submitBtn.disabled = true;
 
-            // 準備要傳送的資料
-            const formData = new FormData();
-            formData.append("公司名稱", orgName);
-            formData.append("聯絡人姓名", contactName);
-            formData.append("Email", email);
-            formData.append("預估賽事規模", eventSize);
-            formData.append("需求說明", message);
+            // ★ 2. 將資料打包成 JSON 格式 (n8n 解析最友善的格式) ★
+            const payload = {
+                companyName: orgName,
+                contactPerson: contactName,
+                email: email,
+                eventScale: eventSize,
+                requirement: message,
+                source: "Jekoo AI 官方網站" // 加上來源標記，方便 n8n 後端辨識
+            };
 
-            // 如果你還沒有設定 Formspree，這段會只跳出提示並清空表單
-            if (formspreeEndpoint === "填入你的_Formspree_API_網址") {
-                setTimeout(() => {
-                    alert(`【展示模式】感謝 ${contactName} 的詢問！這封信預計會寄到 jekoo.intelligent@gmail.com。請開發者記得替換 API 網址！`);
-                    submitBtn.innerText = originalBtnText;
-                    submitBtn.disabled = false;
-                    contactForm.reset();
-                }, 800);
-                return;
-            }
-
-            // 實際發送資料到第三方信箱服務
-            fetch(formspreeEndpoint, {
+            // 實際發送資料到 n8n Webhook
+            fetch(n8nWebhookUrl, {
                 method: 'POST',
-                body: formData,
                 headers: {
+                    'Content-Type': 'application/json', // 告訴 n8n 我們傳的是 JSON
                     'Accept': 'application/json'
-                }
-            }).then(response => {
+                },
+                body: JSON.stringify(payload) // 將 JavaScript 物件轉成 JSON 字串
+            })
+            .then(response => {
+                // n8n Webhook 預設成功會回傳 200 OK
                 if (response.ok) {
                     alert(`感謝 ${contactName} 的詢問！捷庫智能團隊已收到您的資訊，將盡快與您聯繫！`);
-                    contactForm.reset();
+                    contactForm.reset(); // 清空表單
                 } else {
-                    alert("抱歉，發送過程中出現問題，請直接發送 Email 至 jekoo.intelligent@gmail.com");
+                    alert("抱歉，發送過程中伺服器無回應，請直接發送 Email 至 jekoo.intelligent@gmail.com");
                 }
-            }).catch(error => {
-                alert("網路連線錯誤，請直接發送 Email 至 jekoo.intelligent@gmail.com");
-            }).finally(() => {
+            })
+            .catch(error => {
+                console.error("Fetch Error:", error);
+                alert("網路連線錯誤，請檢查您的網路或直接發送 Email 至 jekoo.intelligent@gmail.com");
+            })
+            .finally(() => {
                 // 恢復按鈕狀態
                 submitBtn.innerText = originalBtnText;
                 submitBtn.disabled = false;
             });
         });
     }
+    }
 
 });
+
