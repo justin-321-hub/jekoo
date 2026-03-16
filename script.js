@@ -46,6 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
         observer.observe(el);
     });
 
+
     // 3. 聯絡表單防呆與發送 (串接 n8n Webhook)
     const contactForm = document.getElementById('contact-form');
     const submitBtn = document.getElementById('submit-btn');
