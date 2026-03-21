@@ -47,6 +47,53 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
 
+    // 4. 手機版漢堡選單切換
+    const hamburger = document.querySelector('.hamburger');
+    const navLinks = document.querySelector('.nav-links');
+    const navItems = document.querySelectorAll('.nav-links a');
+
+    if (hamburger) {
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            // 順便切換圖示：從三條線變成 X (如果你是用 FontAwesome)
+            const icon = hamburger.querySelector('i');
+            icon.classList.toggle('fa-bars');
+            icon.classList.toggle('fa-times');
+        });
+    }
+
+    // 點擊選單連結後，自動關閉選單 (UX 優化)
+    navItems.forEach(item => {
+        item.addEventListener('click', () => {
+            navLinks.classList.remove('active');
+            const icon = hamburger.querySelector('i');
+            if(icon) {
+                icon.classList.add('fa-bars');
+                icon.classList.remove('fa-times');
+            }
+        });
+    });   
+    
+    // 5. 回到頂部按鈕邏輯
+    const backToTopBtn = document.getElementById('back-to-top');
+
+    window.addEventListener('scroll', () => {
+        // 當視窗捲動超過 400px 時顯示按鈕
+        if (window.pageYOffset > 400) {
+            backToTopBtn.classList.add('show');
+        } else {
+            backToTopBtn.classList.remove('show');
+        }
+    });
+
+    backToTopBtn.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    });
+
+
     // 3. 聯絡表單防呆與發送 (串接 n8n Webhook)
     const contactForm = document.getElementById('contact-form');
     const submitBtn = document.getElementById('submit-btn');

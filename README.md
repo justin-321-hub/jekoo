@@ -446,3 +446,211 @@
 - 修改了.hero的部分
 - 新增了遮罩可以改變透明度(.hero-images-top::after)
 - .hero-text-overlay 控制圖片上層的黃色文字
+
+### 修改半視窗或手機時hero的顯示效果
+
+**css**:
+
+```css
+/* 📱 手機版 RWD 排版 */
+@media (max-width: 768px) {
+
+    .hero-images-top {
+        height: 250px; 
+    }
+
+    .hero-text-main {
+        margin-top: 15px;
+        margin-bottom: 20px;
+    }
+
+    .hero-title {
+        font-size: 2.2rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.5rem; /* 手機版縮小，才不會超出圖片範圍 */
+        white-space: normal; /* 允許自動換行，避免太長切掉 */
+        line-height: 1.4;
+    }
+
+    .hero-text-overlay {
+        /* 手機版圖片較矮，間距也要跟著縮小，才不會擠到中間 */
+        padding-bottom: 30px; 
+    }
+
+    .hero-gallery {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .hero-item {
+        /* 極窄螢幕改為一排一個 */
+        flex: 1 1 100%; 
+    }
+
+    .cta-btn {
+        padding: 10px 25px;
+        font-size: 1rem;
+        width: 80%; /* 手機版按鈕可以寬一點比較好點擊 */
+    }
+}
+```
+說明:
+
+### 漢堡選單的功能和樣式
+
+**css**:
+
+```css
+@media (max-width: 768px) {
+    /* 讓選單預設隱藏，並定位在導覽列下方 */
+    .nav-links {
+        display: none; /* 預設隱藏 */
+        flex-direction: column;
+        position: absolute;
+        top: 68px; /* navbar 的高度 */
+        left: 0;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        padding: 20px 0;
+        box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+        gap: 20px;
+        text-align: center;
+    }
+
+    /* 當 JS 加入 .active 類別時顯示選單 */
+    .nav-links.active {
+        display: flex;
+    }
+
+    .nav-btn {
+        width: 80%; /* 讓按鈕在手機版寬一點 */
+        margin: 0 auto;
+    }
+}
+```
+說明:
+
+**js**:
+
+```js
+const hamburger = document.querySelector('.hamburger');
+const navLinks = document.querySelector('.nav-links');
+const navItems = document.querySelectorAll('.nav-links a');
+
+if (hamburger) {
+    hamburger.addEventListener('click', () => {
+        navLinks.classList.toggle('active');
+        // 順便切換圖示：從三條線變成 X (如果你是用 FontAwesome)
+        const icon = hamburger.querySelector('i');
+        icon.classList.toggle('fa-bars');
+        icon.classList.toggle('fa-times');
+    });
+}
+
+// 點擊選單連結後，自動關閉選單 (UX 優化)
+navItems.forEach(item => {
+    item.addEventListener('click', () => {
+        navLinks.classList.remove('active');
+        const icon = hamburger.querySelector('i');
+        if(icon) {
+            icon.classList.add('fa-bars');
+            icon.classList.remove('fa-times');
+        }
+    });
+});
+```
+
+說明:
+- 在 document.addEventListener 中心增
+
+### 添加回到最頂部的按鈕
+
+**html**:
+
+```html
+<div id="back-to-top" class="back-to-top">
+    <i class="fas fa-chevron-up"></i>
+</div>
+```
+說明:
+- 在footer下方，body結束前新增
+
+**css**:
+
+```css
+/* --- 回到頂部按鈕樣式 --- */
+.back-to-top {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 50px;
+    height: 50px;
+    background: var(--accent-blue);
+    color: var(--white);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-md);
+    z-index: 1000;
+    
+    /* 動態效果 */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px); /* 讓它有一點從下面浮上來的感覺 */
+    transition: all 0.3s ease; /* 控制出現的動畫速度 */
+    z-index: 1000;
+}
+
+.back-to-top.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.back-to-top:hover {
+    background: var(--primary-blue);
+    transform: translateY(-5px);
+}
+
+/* 手機版稍微縮小，避免擋到內容 */
+@media (max-width: 768px) {
+    .back-to-top {
+        bottom: 20px;
+        right: 20px;
+        width: 40px;
+        height: 40px;
+    }
+}
+```
+說明:
+
+**js**:
+
+```js
+const backToTopBtn = document.getElementById('back-to-top');
+
+window.addEventListener('scroll', () => {
+    // 當視窗捲動超過 400px 時顯示按鈕
+    if (window.pageYOffset > 400) {
+        backToTopBtn.classList.add('show');
+    } else {
+        backToTopBtn.classList.remove('show');
+    }
+});
+
+backToTopBtn.addEventListener('click', () => {
+    window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+    });
+});
+```
+說明:
+- 在document.addEventListener新增
+
+---
