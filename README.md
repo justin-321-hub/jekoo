@@ -225,3 +225,224 @@
 - (width: 100%, height: 100%)：這告訴圖片「你的極限就是這個藍紫色的空間」。
 - (object-fit: contain)：這是最聰明的屬性。它會幫你計算：如果圖片太寬，就左右貼齊，上下自動留出藍紫色的縫隙；如果圖片太高，就上下貼齊，左右留縫隙。絕對不變形、絕對不裁切！
 ---
+## 2026-03-16
+### 修改hero介面，把案例圖片合併到hero中
+
+**html**:
+
+```html
+    <section class="hero-composite" id="hero">
+        <div class="hero-images-top">
+            <img src="images/hero_run.png" alt="跑步運動員" class="hero-img">
+            <img src="images/hero_swim.png" alt="游泳運動員" class="hero-img">
+            <img src="images/hero_bike.png" alt="單車運動員" class="hero-img">
+            
+            <!-- 新增這個外層 div -->
+            <div class="hero-text-overlay">
+                <p class="hero-subtitle">專為中大型運動賽事打造的</p>
+            </div>
+        </div>
+
+        <div class="hero-content">
+            <div class="hero-gallery fade-in">
+            <div class="hero-item">
+                <img src="images/QA_weather.png" alt="天氣截圖" class="full-img" />
+            </div>
+            <div class="hero-item">
+                <img src="images/QA_contact.png" alt="聯絡截圖" class="full-img" />
+            </div>
+            <div class="hero-item">
+                <img src="images/QA_parking.png" alt="停車截圖" class="full-img" />
+            </div>
+            <div class="hero-item">
+                <img src="images/QA_time.png" alt="時間截圖" class="full-img" />
+            </div>
+            </div>
+
+            <div class="hero-text-main fade-in">
+            <h1 class="hero-title">AI 賽事智慧助理</h1>
+            </div>
+
+            <a href="#contact" class="cta-btn fade-in"
+            >立即諮詢 <i class="fas fa-arrow-right"></i
+            ></a>
+        </div>
+    </section>
+```
+說明:
+- 刪除了 gallery-section
+
+```css
+/* --- 複合式 Hero 介面 (Hero Composite) --- */
+.hero-composite {
+  height: 100vh;
+  min-height: 800px;
+  padding-top: 68px;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(135deg, #0A2540 0%, #1A3A5F 100%);
+  color: var(--white);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 頂部圖片並排 (新增 position: relative) */
+.hero-images-top {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 400px;
+}
+
+.hero-img {
+  flex: 1;
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  object-position: center center;
+  display: block;
+}
+
+/* 核心修改：增加深色半透明遮罩，讓圖片變暗/透明 */
+.hero-images-top::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* 使用深藍色，透明度 0.5 (可依需求調整 0.0 ~ 1.0) */
+    background-color: rgba(0, 0, 0, 0.5); 
+    z-index: 1; /* 蓋在圖片上面 */
+}
+
+/* 1. 黃色子標題 (修改定位方式) */
+/* 簡化 subtitle 的樣式，不需要再寫定位座標 */
+.hero-subtitle {
+    color: #F8D951;
+    font-size: 3rem;
+    font-weight: 600;
+    letter-spacing: 2px;
+    margin: 0;
+    white-space: nowrap;
+    text-shadow: 0 2px 15px rgba(0, 0, 0, 0.9);
+    /* 這裡不需要寫 top, left 或 transform 了！ */
+}
+
+/* 新增：這個層會鋪滿整個圖片區域，並負責把內容置中 */
+.hero-text-overlay {
+    position: absolute;
+    top: 30%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;           /* 使用 Flexbox */
+    justify-content: center; /* 水平置中 (以全文字為中心) */
+    align-items: center;     /* 垂直置中 */
+    z-index: 10;
+    pointer-events: none;    /* 讓滑鼠點擊可以穿透文字層，不影響圖片 */
+}
+
+/* 文字內容區 (移除 top padding，因為 subtitle 移走了) */
+.hero-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 5px 0 5px;
+}
+
+/* 2. 四張功能截圖卡片 */
+.hero-gallery {
+  display: flex;
+  gap: 15px;
+  padding-top: 20px;
+  margin-bottom: 5px;
+  max-width: 100%;
+}
+
+.hero-item {
+  background: rgba(232, 240, 255, 0.15);
+  border-radius: 8px;
+  padding: 0px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 230px;
+  width: 100%;
+}
+
+.full-img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+/* 3. 大標題與爆炸框 */
+.hero-text-main {
+  position: relative;
+  margin-bottom: 20px;
+  padding: 0 50px;
+}
+
+/* 大漸層標題 */
+.hero-title {
+  font-size: 2.5rem;
+  line-height: 1.2;
+  font-weight: 900;
+  position: relative;
+  z-index: 2;
+  padding-bottom: 20px;
+
+  background: linear-gradient(180deg, #FFFFFF 0%, #D8F2FF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  letter-spacing: 1px;
+}
+
+/* 4. CTA 按鈕 */
+.cta-btn {
+  background: var(--primary-green, #28C76F);
+  color: var(--white, #ffffff) !important;
+  padding: 15px 40px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  border-radius: 30px;
+  box-shadow: 0 10px 20px rgba(40, 199, 111, 0.3);
+  transition: all 0.3s ease;
+  display: inline-block;
+  text-decoration: none;
+  z-index: 3;
+  position: relative;
+}
+
+.cta-btn:hover {
+  background: #21a55c;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px rgba(40, 199, 111, 0.5);
+}
+
+/* 📱 手機版 RWD 排版 */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.2rem;
+  }
+  .hero-subtitle {
+    font-size: 1.1rem;
+    /* 手機版可能需要調整定位或寬度，視情況而定 */
+  }
+
+  .hero-gallery {
+    flex-direction: column;
+    gap: 20px;
+  }
+}
+```
+說明:
+- 修改了.hero的部分
+- 新增了遮罩可以改變透明度(.hero-images-top::after)
+- .hero-text-overlay 控制圖片上層的黃色文字
