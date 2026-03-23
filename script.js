@@ -46,7 +46,6 @@ document.addEventListener("DOMContentLoaded", () => {
         observer.observe(el);
     });
 
-
     // 4. 手機版漢堡選單切換
     const hamburger = document.querySelector('.hamburger');
     const navLinks = document.querySelector('.nav-links');
@@ -55,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (hamburger) {
         hamburger.addEventListener('click', () => {
             navLinks.classList.toggle('active');
-            // 順便切換圖示：從三條線變成 X (如果你是用 FontAwesome)
+            // 順便切換圖示：從三條線變成 X
             const icon = hamburger.querySelector('i');
             icon.classList.toggle('fa-bars');
             icon.classList.toggle('fa-times');
@@ -92,9 +91,10 @@ document.addEventListener("DOMContentLoaded", () => {
             behavior: 'smooth'
         });
     });
-
-
+    
+    // ==========================================
     // 3. 聯絡表單防呆與發送 (串接 n8n Webhook)
+    // ==========================================
     const contactForm = document.getElementById('contact-form');
     const submitBtn = document.getElementById('submit-btn');
     
@@ -109,20 +109,29 @@ document.addEventListener("DOMContentLoaded", () => {
             const orgName = document.getElementById('orgName').value.trim();
             const contactName = document.getElementById('contactName').value.trim();
             const email = document.getElementById('email').value.trim();
-            const eventSize = document.getElementById('eventSize').value;
+            const phone = document.getElementById('phone') ? document.getElementById('phone').value.trim() : '';
+            const lineId = document.getElementById('lineId') ? document.getElementById('lineId').value.trim() : '';
             const message = document.getElementById('message').value.trim();
 
-            // 簡易防呆檢查
-            if (!orgName || !contactName || !email || !eventSize) {
-                alert("請填寫所有標示 '*' 的必填欄位。");
+            // 簡易防呆檢查：公司名稱與聯絡人姓名為必填
+            if (!orgName || !contactName) {
+                alert("請填寫賽事主辦單位與聯絡人姓名。");
                 return;
             }
 
-            // Email 格式簡單檢查
-            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailPattern.test(email)) {
-                alert("請輸入有效的企業 Email 格式。");
-                return;
+            // 🌟 核心防呆：Email、電話、Line ID 至少填寫一項
+            if (!email && !phone && !lineId) {
+                alert("請至少留下 Email、聯絡電話 或 LINE ID 其中一種聯絡方式，方便團隊回覆您！");
+                return; // 中斷發送
+            }
+
+            // Email 格式簡單檢查 (只有在使用者有填寫 Email 時才檢查)
+            if (email) {
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailPattern.test(email)) {
+                    alert("請輸入有效的企業 Email 格式。");
+                    return;
+                }
             }
 
             // 變更按鈕狀態為處理中
@@ -134,10 +143,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const payload = {
                 companyName: orgName,
                 contactPerson: contactName,
-                email: email,
-                eventScale: eventSize,
-                requirement: message,
-                source: "Jekoo AI 官方網站" // 加上來源標記，方便 n8n 後端辨識
+                email: email || "未提供",
+                phone: phone || "未提供",
+                lineId: lineId || "未提供",
+                requirement: message || "無額外說明",
+                source: "Jekoo AI 官方網站" // 加上來源標記
             };
 
             // 實際發送資料到 n8n Webhook
@@ -169,8 +179,82 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
     }
+
+    // ==========================================
+    // 6. [終極版] 手機/平板卡片 無縫線性無限循環跑馬燈
+    // ==========================================
+    const gallery = document.querySelector('.hero-gallery');
+    
+    if (gallery) {
+        let isPaused = false;
+        let animationId;
+        let isMarqueeActive = false;
+        const scrollSpeed = 0.5; // ⚙️ 調整這個數字可以改變滑動速度 (數字越大越快)
+        const originalItemCount = gallery.children.length; // 記住原本有 4 張卡片
+
+        function startLinearScroll() {
+            if (!isPaused) {
+                gallery.scrollLeft += scrollSpeed;
+                
+                // 尋找第一張「複製出來的卡片」
+                const firstClone = gallery.querySelector('.clone-item');
+                if (firstClone) {
+                    // 計算完美無縫接軌的「重置點」 (第一張複製品的左邊界 減去 畫廊內第一張圖的左邊界)
+                    const resetPoint = firstClone.offsetLeft - gallery.firstElementChild.offsetLeft;
+                    
+                    // 當捲軸剛好滑到複製品的位置時，瞬間把捲軸拉回起點 (因為長得一樣，視覺上完全看不出來)
+                    if (gallery.scrollLeft >= resetPoint) {
+                        gallery.scrollLeft -= resetPoint; 
+                    }
+                }
+            }
+            // 使用瀏覽器原生動畫 API 達成 60fps 最滑順的線性移動
+            animationId = requestAnimationFrame(startLinearScroll);
+        }
+
+        function initMarquee() {
+            // 只有在平板/手機尺寸 (小於等於 992px) 啟動
+            if (window.innerWidth <= 1400) {
+                if (!isMarqueeActive) {
+                    isMarqueeActive = true;
+                    
+                    // 1. 把原本的卡片完整複製一份，接在後面 (達成無限循環的錯覺)
+                    const items = Array.from(gallery.children);
+                    for(let i = 0; i < originalItemCount; i++) {
+                        const clone = items[i].cloneNode(true);
+                        clone.classList.add('clone-item'); // 貼上複製品標籤以便辨識
+                        gallery.appendChild(clone);
+                    }
+                    
+                    // 2. 啟動線性滑動
+                    cancelAnimationFrame(animationId);
+                    animationId = requestAnimationFrame(startLinearScroll);
+                }
+            } else {
+                // 電腦版尺寸：關閉跑馬燈，清除複製品
+                if (isMarqueeActive) {
+                    isMarqueeActive = false;
+                    cancelAnimationFrame(animationId);
+                    gallery.scrollLeft = 0; // 捲軸歸零
+                    
+                    // 刪除所有標記為複製的卡片，讓電腦版恢復正常 4 張並排
+                    const clones = gallery.querySelectorAll('.clone-item');
+                    clones.forEach(clone => clone.remove());
+                }
+            }
+        }
+
+        // UX 貼心設計：手指摸到或滑鼠懸停時暫停，方便使用者看清楚文字
+        gallery.addEventListener('mouseenter', () => isPaused = true);
+        gallery.addEventListener('mouseleave', () => isPaused = false);
+        gallery.addEventListener('touchstart', () => isPaused = true, {passive: true});
+        gallery.addEventListener('touchend', () => isPaused = false, {passive: true});
+
+        // 啟動與視窗大小改變時的監聽
+        initMarquee();
+        window.addEventListener('resize', () => {
+            initMarquee();
+        });
+    }
+
 });
-
-
-
-
