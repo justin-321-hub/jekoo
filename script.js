@@ -181,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==========================================
-    // 6. [終極版] 手機/平板卡片 無縫線性無限循環跑馬燈
+    // 6. [終極修復版] 支援 iOS 無縫線性無限循環跑馬燈
     // ==========================================
     const gallery = document.querySelector('.hero-gallery');
     
@@ -189,68 +189,96 @@ document.addEventListener("DOMContentLoaded", () => {
         let isPaused = false;
         let animationId;
         let isMarqueeActive = false;
-        const scrollSpeed = 0.5; // ⚙️ 調整這個數字可以改變滑動速度 (數字越大越快)
-        const originalItemCount = gallery.children.length; // 記住原本有 4 張卡片
+        
+        // ⚙️ 速度設定 (即使設為小數點，這次 iOS 也不會卡住了)
+        const scrollSpeed = 0.8; 
+        
+        // 🍎 iOS 修復核心：用獨立變數精準紀錄浮點數位置
+        let exactScrollLeft = 0; 
+        
+        const originalItemCount = gallery.children.length;
 
         function startLinearScroll() {
             if (!isPaused) {
-                gallery.scrollLeft += scrollSpeed;
+                // 將精準小數點累加到我們的變數中
+                exactScrollLeft += scrollSpeed;
+                
+                // 再把計算好的數值賦予給瀏覽器 (解決 Safari 吃小數點的問題)
+                gallery.scrollLeft = exactScrollLeft;
                 
                 // 尋找第一張「複製出來的卡片」
                 const firstClone = gallery.querySelector('.clone-item');
                 if (firstClone) {
-                    // 計算完美無縫接軌的「重置點」 (第一張複製品的左邊界 減去 畫廊內第一張圖的左邊界)
                     const resetPoint = firstClone.offsetLeft - gallery.firstElementChild.offsetLeft;
                     
-                    // 當捲軸剛好滑到複製品的位置時，瞬間把捲軸拉回起點 (因為長得一樣，視覺上完全看不出來)
+                    // 當捲軸剛好滑到複製品的位置時，瞬間把捲軸拉回起點
                     if (gallery.scrollLeft >= resetPoint) {
                         gallery.scrollLeft -= resetPoint; 
+                        exactScrollLeft -= resetPoint; // 🍎 同步重置我們的精準變數
                     }
                 }
             }
-            // 使用瀏覽器原生動畫 API 達成 60fps 最滑順的線性移動
             animationId = requestAnimationFrame(startLinearScroll);
         }
 
         function initMarquee() {
-            // 只有在平板/手機尺寸 (小於等於 992px) 啟動
             if (window.innerWidth <= 1400) {
                 if (!isMarqueeActive) {
                     isMarqueeActive = true;
                     
-                    // 1. 把原本的卡片完整複製一份，接在後面 (達成無限循環的錯覺)
+                    // 複製卡片
                     const items = Array.from(gallery.children);
                     for(let i = 0; i < originalItemCount; i++) {
                         const clone = items[i].cloneNode(true);
-                        clone.classList.add('clone-item'); // 貼上複製品標籤以便辨識
+                        clone.classList.add('clone-item'); 
                         gallery.appendChild(clone);
                     }
                     
-                    // 2. 啟動線性滑動
+                    // 啟動滑動
+                    exactScrollLeft = gallery.scrollLeft; // 初始化位置
                     cancelAnimationFrame(animationId);
                     animationId = requestAnimationFrame(startLinearScroll);
                 }
             } else {
-                // 電腦版尺寸：關閉跑馬燈，清除複製品
                 if (isMarqueeActive) {
                     isMarqueeActive = false;
                     cancelAnimationFrame(animationId);
-                    gallery.scrollLeft = 0; // 捲軸歸零
+                    gallery.scrollLeft = 0; 
+                    exactScrollLeft = 0;
                     
-                    // 刪除所有標記為複製的卡片，讓電腦版恢復正常 4 張並排
                     const clones = gallery.querySelectorAll('.clone-item');
                     clones.forEach(clone => clone.remove());
                 }
             }
         }
 
-        // UX 貼心設計：手指摸到或滑鼠懸停時暫停，方便使用者看清楚文字
-        gallery.addEventListener('mouseenter', () => isPaused = true);
-        gallery.addEventListener('mouseleave', () => isPaused = false);
-        gallery.addEventListener('touchstart', () => isPaused = true, {passive: true});
-        gallery.addEventListener('touchend', () => isPaused = false, {passive: true});
+        // 🍎 iOS 修復核心：當使用者「手動滑動」時，強制同步精準變數
+        gallery.addEventListener('scroll', () => {
+            if (isPaused) {
+                exactScrollLeft = gallery.scrollLeft;
+            }
+        }, { passive: true });
 
-        // 啟動與視窗大小改變時的監聽
+        // 電腦版滑鼠控制
+        gallery.addEventListener('mouseenter', () => isPaused = true);
+        gallery.addEventListener('mouseleave', () => {
+            isPaused = false;
+            exactScrollLeft = gallery.scrollLeft; // 重新接管時校正位置
+        });
+
+        // 🍎 iOS 觸控控制優化
+        gallery.addEventListener('touchstart', () => {
+            isPaused = true;
+        }, {passive: true});
+        
+        gallery.addEventListener('touchend', () => {
+            // iOS 慣性滑動保護：手指放開後，等待 800 毫秒(等慣性慢慢停下)再重新啟動馬達
+            setTimeout(() => {
+                isPaused = false;
+                exactScrollLeft = gallery.scrollLeft; // 接管前先對齊目前被手滑到的位置
+            }, 800);
+        }, {passive: true});
+
         initMarquee();
         window.addEventListener('resize', () => {
             initMarquee();
