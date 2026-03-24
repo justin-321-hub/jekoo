@@ -1,0 +1,81 @@
+/* =========================================
+   全域變數與基礎設定
+   ========================================= */
+:root {
+    --primary-blue: #0A2540;
+    --accent-blue: #0066FF;
+    --primary-green: #28C76F;
+    --text-dark: #333333;
+    --text-gray: #666666;
+    --bg-light: #F8F9FA;
+    --white: #FFFFFF;
+    --shadow-sm: 0 4px 6px rgba(0,0,0,0.05);
+    --shadow-md: 0 10px 20px rgba(0,0,0,0.08);
+    --transition: all 0.3s ease;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Noto Sans TC', sans-serif; color: var(--text-dark); line-height: 1.6; overflow-x: hidden; }
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+
+/* 共用排版工具 */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+.section-padding { padding: 80px 0; }
+.bg-light { background-color: var(--bg-light); }
+.text-center { text-align: center; }
+.section-title { text-align: center; font-size: 2.2rem; color: var(--primary-blue); margin-bottom: 50px; font-weight: 700; }
+
+/* 自訂極簡捲軸 */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(10, 37, 64, 0.3); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(10, 37, 64, 0.6); }
+
+/* 動畫基礎 Classes */
+.fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.8s ease-out, transform 0.8s ease-out; }
+.fade-in.visible { opacity: 1; transform: translateY(0); }
+
+/* =========================================
+   導覽列 (Navbar)
+   ========================================= */
+.navbar { position: fixed; top: 0; width: 100%; z-index: 1000; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); box-shadow: var(--shadow-sm); transition: var(--transition); }
+.nav-container { max-width: 1200px; margin: 0 auto; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+.logo { display: flex; align-items: center; gap: 10px; font-size: 1.5rem; font-weight: 900; color: var(--primary-blue); }
+.logo-img { height: 35px; width: auto; }
+.logo span { color: var(--accent-blue); }
+.nav-links { display: flex; align-items: center; gap: 30px; }
+.nav-links a { font-weight: 500; color: var(--text-dark); transition: var(--transition); }
+.nav-links a:hover { color: var(--accent-blue); }
+.nav-btn { background: var(--primary-blue); color: var(--white) !important; padding: 8px 20px; border-radius: 5px; font-weight: 700; }
+.nav-btn:hover { background: var(--accent-blue); transform: translateY(-2px); }
+.hamburger { display: none; font-size: 1.5rem; cursor: pointer; color: var(--primary-blue); }
+
+@media (max-width: 768px) {
+    .nav-links { display: none; flex-direction: column; position: absolute; top: 68px; left: 0; width: 100%; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 20px 0; box-shadow: 0 10px 15px rgba(0,0,0,0.1); gap: 20px; text-align: center; }
+    .nav-links.active { display: flex; }
+    .nav-btn { width: 80%; margin: 0 auto; }
+    .hamburger { display: block; }
+}
+
+/* =========================================
+   頁尾 (Footer) 與 其他全域組件
+   ========================================= */
+footer { background: var(--primary-blue); color: var(--white); padding: 40px 0 20px; }
+.footer-content { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 20px; margin-bottom: 20px; }
+.footer-logo { font-size: 1.2rem; font-weight: 900; }
+.footer-logo span { color: var(--primary-green); }
+.social-links { display: flex; align-items: center; }
+.social-links a { color: var(--white); font-size: 1.2rem; margin-left: 15px; opacity: 0.8; transition: var(--transition); }
+.social-links a:hover { opacity: 1; color: var(--primary-green); }
+.disabled-social { display: inline-flex; align-items: center; color: rgba(255, 255, 255, 0.3); margin-left: 15px; cursor: not-allowed; user-select: none; }
+.coming-soon-badge { font-size: 0.65rem; font-weight: 500; color: rgba(255, 255, 255, 0.4); border: 1px solid rgba(255, 255, 255, 0.2); padding: 2px 6px; border-radius: 4px; margin-left: 6px; letter-spacing: 0.5px; }
+.copyright { text-align: center; font-size: 0.85rem; opacity: 0.6; }
+.footer-email { font-size: 1rem !important; font-weight: 500; margin-left: 20px !important; }
+.footer-email i { margin-right: 5px; }
+
+/* 回到頂部按鈕 */
+.back-to-top { position: fixed; bottom: 30px; right: 30px; width: 50px; height: 50px; background: var(--accent-blue); color: var(--white); border-radius: 50%; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: var(--shadow-md); opacity: 0; visibility: hidden; transform: translateY(20px); transition: all 0.3s ease; z-index: 1000; }
+.back-to-top.show { opacity: 1; visibility: visible; transform: translateY(0); }
+.back-to-top:hover { background: var(--primary-blue); transform: translateY(-5px); }
+@media (max-width: 768px) { .back-to-top { bottom: 20px; right: 20px; width: 40px; height: 40px; } }

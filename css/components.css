@@ -1,0 +1,78 @@
+/* =========================================
+   解決方案 (Split Layout) & 特色介紹 (Grid)
+   ========================================= */
+.split-layout { display: flex; gap: 30px; }
+.solution-card { flex: 1; background: var(--white); padding: 40px; border-radius: 12px; box-shadow: var(--shadow-md); position: relative; overflow: hidden; }
+.solution-card.before { border-top: 5px solid #E74C3C; }
+.solution-card.after { border-top: 5px solid var(--primary-green); }
+.icon-wrapper { font-size: 3rem; margin-bottom: 20px; }
+.before .icon-wrapper { color: #E74C3C; }
+.after .icon-wrapper { color: var(--primary-green); }
+.solution-card h3 { font-size: 1.5rem; margin-bottom: 20px; color: var(--primary-blue); }
+.solution-card ul li { margin-bottom: 15px; display: flex; align-items: flex-start; gap: 10px; color: var(--text-gray); }
+.before ul li i { color: #E74C3C; margin-top: 4px; }
+.after ul li i { color: var(--primary-green); margin-top: 4px; }
+
+.grid-layout { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; }
+.feature-card { background: var(--white); padding: 40px 30px; border-radius: 12px; box-shadow: var(--shadow-sm); transition: var(--transition); text-align: center; }
+.feature-card:hover { transform: translateY(-10px); box-shadow: var(--shadow-md); }
+.icon-primary { font-size: 2.5rem; color: var(--accent-blue); margin-bottom: 20px; }
+.feature-card h3 { font-size: 1.3rem; margin-bottom: 15px; color: var(--primary-blue); }
+.feature-card p { color: var(--text-gray); font-size: 0.95rem; }
+
+.about-text { max-width: 800px; margin: 0 auto; font-size: 1.1rem; color: var(--text-gray); line-height: 1.8; }
+
+/* =========================================
+   標準化導入流程 (4步驟版)
+   ========================================= */
+.process-grid-modern { display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; padding: 2rem 0; position: relative; }
+@media (min-width: 992px) {
+    .process-grid-modern::before { content: ''; position: absolute; top: 50%; left: 10%; right: 10%; height: 3px; background: linear-gradient(90deg, #e0e0e0 0%, #007bff 50%, #e0e0e0 100%); z-index: 0; opacity: 0.3; transform: translateY(-50%); }
+}
+.process-card-modern { background: #ffffff; border-radius: 20px; padding: 40px 20px 30px; text-align: center; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04); position: relative; z-index: 1; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); border: 1px solid rgba(0, 123, 255, 0.05); display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 180px; }
+.process-card-modern:hover { transform: translateY(-10px); box-shadow: 0 15px 40px rgba(0, 123, 255, 0.15); border-color: rgba(0, 123, 255, 0.2); }
+.step-badge-modern { width: 46px; height: 46px; background: linear-gradient(135deg, #007bff, #00d2ff); color: #ffffff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 1.1rem; position: absolute; top: -23px; left: 50%; transform: translateX(-50%); border: 4px solid #ffffff; box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3); }
+.process-icon-modern { font-size: 3rem; margin-bottom: 1.2rem; background: -webkit-linear-gradient(45deg, #007bff, #8e44ad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; transition: transform 0.3s ease; }
+.process-card-modern:hover .process-icon-modern { transform: scale(1.1); }
+.process-card-modern h3 { font-size: 1.2rem; color: #2c3e50; margin: 0; font-weight: 700; line-height: 1.5; letter-spacing: 0.5px; }
+
+/* 舊版流程兼容 (若有需要保留) */
+.process-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+
+/* =========================================
+   聯絡表單與資訊
+   ========================================= */
+.b2b-form { max-width: 700px; margin: 0 auto; background: var(--white); padding: 40px; border-radius: 12px; box-shadow: var(--shadow-md); }
+.form-row { display: flex; gap: 20px; }
+.form-group { margin-bottom: 20px; width: 100%; }
+.form-group.half { width: 50%; }
+.form-group.third { width: 33.33%; }
+label { display: block; margin-bottom: 8px; font-weight: 500; color: var(--primary-blue); }
+input, select, textarea { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; font-size: 1rem; transition: var(--transition); }
+input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent-blue); box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1); }
+.submit-btn { width: 100%; background: var(--primary-blue); color: var(--white); border: none; padding: 15px; font-size: 1.1rem; font-weight: 700; border-radius: 6px; cursor: pointer; transition: var(--transition); }
+.submit-btn:hover { background: var(--accent-blue); }
+
+.contact-info { margin-bottom: 40px; color: var(--text-gray); font-size: 1.1rem; }
+.email-direct-link { display: inline-block; margin-top: 10px; font-size: 1.2rem; font-weight: 700; color: var(--accent-blue); background: rgba(0, 102, 255, 0.1); padding: 10px 20px; border-radius: 30px; transition: var(--transition); }
+.email-direct-link:hover { background: var(--accent-blue); color: var(--white); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 102, 255, 0.2); }
+.contact-method-section { background: rgba(10, 37, 64, 0.03); padding: 20px 20px 5px; border-radius: 8px; margin-bottom: 20px; border: 1px dashed #ccc; }
+.section-hint { font-size: 0.95rem; color: var(--accent-blue); margin-bottom: 15px; font-weight: 700; }
+.section-hint i { margin-right: 5px; }
+
+/* RWD - 內容與表單 */
+@media (max-width: 991px) {
+    .process-grid-modern { grid-template-columns: repeat(2, 1fr); gap: 3rem 2rem; padding-top: 3rem; }
+}
+@media (max-width: 768px) {
+    .split-layout { flex-direction: column; }
+    .form-row { flex-direction: column; gap: 0; }
+    .form-group.half, .form-group.third { width: 100%; }
+    .contact-method-section { padding: 15px 15px 0; }
+    .process-grid { grid-template-columns: 1fr; gap: 20px; }
+    .process-card { padding: 25px 20px; }
+}
+@media (max-width: 576px) {
+    .process-grid-modern { grid-template-columns: 1fr; gap: 3.5rem; }
+    .process-card-modern { min-height: auto; padding: 35px 20px 25px; }
+}

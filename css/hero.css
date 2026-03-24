@@ -1,0 +1,113 @@
+/* =========================================
+   複合式 Hero 介面
+   ========================================= */
+.hero-composite { min-height: 100vh; display: flex; flex-direction: column; background: linear-gradient(135deg, #0A2540 0%, #1A3A5F 100%); color: var(--white); position: relative; overflow: hidden; padding-top: 68px; }
+.hero-images-top {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    /* 👇 原本是 350px，現在改成以視窗寬度為基準的 responsive 高度 */
+    height: 35vw;
+    max-height: 40vh;   /* 💡 核心新增：最大高度「絕對不超過」螢幕高度的 45% */ 
+    position: relative;
+    overflow: hidden;
+    background-color: var(--primary-blue);
+}
+.hero-img { flex: 1; max-width: 33.333%; height: 100%; object-fit: cover; object-position: center; z-index: 0; }
+.hero-images-top::after { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); z-index: 1; }
+
+.hero-subtitle { color: #F8D951; font-size: 3rem; font-weight: 700; letter-spacing: 2px; margin: 0; text-align: center; text-shadow: 0 2px 15px rgba(0, 0, 0, 0.9); }
+.hero-text-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; justify-content: center; align-items: flex-end; padding-bottom: 30px; z-index: 10; pointer-events: none; padding-left: 20px; padding-right: 20px; }
+.hero-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* 讓整體內容垂直居中，不隨意散開 */
+    text-align: center;
+    padding: 20px 0;
+    gap: 15px; /* 💡 核心關鍵：將圖片區和下方資訊區的間距「鎖死」在 30px */
+}
+
+.hero-text-main {
+    position: relative;
+    padding: 0 20px;
+    width: 100%;
+    margin-top: 0;    /* 💡 歸零：交給外層的 gap 控制 */
+    margin-bottom: 0; /* 💡 歸零：避免下方出現不必要的過大留白 */
+}
+.hero-title { font-size: 3.5rem; line-height: 1.2; font-weight: 900; margin: 0 auto; background: linear-gradient(180deg, #FFFFFF 0%, #D8F2FF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; letter-spacing: 2px; }
+
+.cta-btn { background: var(--primary-green); color: var(--white) !important; padding: 12px 35px; font-size: 1.1rem; font-weight: 700; border-radius: 30px; box-shadow: 0 10px 20px rgba(40, 199, 111, 0.3); transition: var(--transition); display: inline-block; z-index: 3; max-width: 90%; text-align: center; }
+.cta-btn:hover { background: #21a55c; transform: translateY(-3px); box-shadow: 0 12px 25px rgba(40, 199, 111, 0.5); }
+
+/* --- Hero 畫廊與卡片 --- */
+.hero-gallery {
+    display: flex;
+    flex-wrap: wrap;
+    /* 💡 關鍵 1：改成 center，讓卡片往畫面正中間集中 */
+    justify-content: center; 
+    /* 💡 關鍵 2：設定卡片之間的固定間隔 (可依喜好調整 30px ~ 50px) */
+    gap: 40px;               
+    padding: 20px 20px 0;
+    margin-bottom: 0;
+    width: 100%;
+}
+.hero-item {
+    background: rgba(232, 240, 255, 0.15);
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    flex: 0 1 auto; 
+    
+    height: 32vh;
+    max-height: 340px;
+    
+    /* 💡 關鍵 3：因為你的圖片看起來是橫排的，建議改成 4/3 或 1/1 (正方形) 會更好看 */
+    aspect-ratio: 4 / 3; 
+    
+    padding: 20px 15px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+}
+.hero-item:hover { transform: translateY(-8px); }
+
+.full-img {
+    width: 100%;
+    height: 100%; /* 💡 高度改為 100%，讓它自動去填滿卡片剩下的空間 */
+    object-fit: contain; /* 確保圖片維持原比例，不會被壓扁 */
+    display: block;
+    transition: transform 0.4s ease;
+}
+.hero-item:hover .full-img { transform: scale(1.05); }
+
+.qa-caption-box { background-color: #f9f9f9; border: 1px solid #ddd; border-radius: 8px; padding: 10px 15px; margin-bottom: 15px; width: 100%; box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center; }
+.qa-caption-text { font-family: 'Noto Sans TC', sans-serif; font-size: 0.95rem; color: #555; margin: 0; line-height: 1.4; font-weight: 700; }
+
+/* RWD - Hero */
+@media (max-width: 2000px) {
+    .hero-gallery { flex-wrap: nowrap !important; justify-content: flex-start !important; overflow-x: auto !important; overflow-y: hidden; width: 100vw !important; max-width: 100vw !important; margin-left: -20px; padding-left: 20px !important; padding-right: 40px !important; padding-bottom: 30px !important; -webkit-overflow-scrolling: touch; scrollbar-width: none; -ms-overflow-style: none; }
+    .hero-gallery::-webkit-scrollbar { display: none; }
+    .hero-item { flex: 0 0 80% !important; max-width: 320px !important; height: 280px; }
+}
+@media (max-width: 768px) {
+    .hero-images-top {
+        height: 35vh; /* 手機版使用視窗高度的 35% */
+    }
+    .hero-content h1 { font-size: 2.2rem; }
+    .hero-text-main { margin-top: 15px; margin-bottom: 20px; }
+    .hero-title { font-size: 2.2rem; }
+    .hero-subtitle { font-size: 1.8rem; white-space: normal; line-height: 1.4; }
+    .hero-text-overlay { padding-bottom: 30px; }
+    .hero-item {
+        flex: 0 0 85%; 
+        max-width: 320px;  /* 手機版橫向滑動時，允許卡片稍微寬一點點 */
+        height: auto;      /* 💡 拔除原本寫死的 280px，讓它根據內容自然延展 */
+        min-height: 250px; /* 給個基本高度，讓滑動時高度看起來一致 */
+    }
+    .cta-btn { padding: 10px 25px; font-size: 1rem; width: 80%; max-width: 320px; margin: 0 auto; display: block; }
+}
