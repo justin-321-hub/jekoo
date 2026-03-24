@@ -222,7 +222,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         function initMarquee() {
-            if (window.innerWidth <= 1400) {
+            if (window.innerWidth <= 2000) {
                 if (!isMarqueeActive) {
                     isMarqueeActive = true;
                     
