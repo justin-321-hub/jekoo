@@ -656,261 +656,216 @@ backToTopBtn.addEventListener('click', () => {
 ---
 
 
-2026-03-29
-
-以下為結合了**修改說明**、**功能用意**以及**完整程式碼對比**的捷庫智能 Jekoo AI 官方網站更新報告，格式已轉換為 Markdown，非常適合直接作為 GitHub 的 README 更新日誌 (Changelog)。
+## 修改日期：2026-03-26
 
 ---
 
-# 捷庫智能 Jekoo AI 官方網站更新日誌 (Changelog)
+### 1. 檔案架構重構：CSS 模組化拆分
 
-## 🏗️ 1. HTML 結構與內容更新
+**修改與新增說明：**
+[cite_start]將原本單一的 `style.css` 拆分為三個獨立的檔案：`global.css`、`hero.css` 與 `components.css` [cite: 13-15, 820]。
 
-### 1.1 引入模組化 CSS 檔案 (Head)
-**修改內容與對比**：
-舊版僅引入單一的全域 `style.css`；新版將 CSS 拆分為三個模組化檔案以利維護。
+**功能與用意：**
+舊版將所有樣式集中在一個檔案中，隨著專案增長容易造成維護困難。新版採用模組化架構，將全域變數/共用元件（global）、首頁視覺區塊（hero）以及獨立組件/表單（components）分開管理，大幅提升了程式碼的可讀性與後續維護的擴充性。
 
-**修改前 (舊版)**：
+**程式碼 (HTML `<head>` 區塊變更)：**
 ```html
 <link rel="stylesheet" href="style.css">
-```
 
-**修改後 (新版)**：
-```html
 <link rel="stylesheet" href="css/global.css">
 <link rel="stylesheet" href="css/hero.css">
 <link rel="stylesheet" href="css/components.css">
 ```
-**功能與用意**：將全域樣式、Hero 區塊與重複使用的元件拆分，大幅提升程式碼的可維護性，減少未來多人協作時的樣式衝突。
-
-### 1.2 Hero 區塊結構重構與圖說新增
-**修改內容與對比**：
-舊版的截圖卡片僅有圖片 且排在主標題上方。新版調整了標題與卡片的上下順序，並在每張卡片內加入了 `<div class="qa-caption-box">` 顯示圖說。
-
-**修改前 (舊版卡片結構)**：
-```html
-<div class="hero-item">
-  <img src="images/QA_weather.png" alt="天氣截圖" class="full-img" />
-</div>
-```
-
-**修改後 (新版卡片結構)**：
-```html
-<div class="hero-item">
-  <div class="qa-caption-box">
-    <p class="qa-caption-text">即時氣象查詢</p>
-  </div>
-  <img src="images/QA_weather.png" alt="天氣截圖" class="full-img" />
-</div>
-```
-**功能與用意**：視覺動線改為「先看大標題，再看功能截圖」更符合邏輯；新增的圖說能明確告知使用者該截圖代表的實際功能（如：即時氣象查詢），提升使用者體驗 (UX)。
-
-### 1.3 B2B 聯絡表單欄位優化
-**修改內容與對比**：
-舊版表單強制必填企業 Email，且須選擇預估賽事規模。新版放寬為「聯絡人姓名/暱稱」，移除賽事規模下拉選單，並提供 Email、電話、LINE ID 擇一填寫的三欄佈局。
-
-**修改前 (舊版嚴格表單局部)**：
-```html
-<div class="form-group half">
-  <label for="email">企業 Email *</label>
-  <input type="email" id="email" name="email" required>
-</div>
-<div class="form-group">
-  <label for="eventSize">預估賽事規模 *</label>
-  <select id="eventSize" name="eventSize" required>...</select>
-</div>
-```
-
-**修改後 (新版彈性表單局部)**：
-```html
-<div class="contact-method-section">
-  <p class="section-hint"><i class="fas fa-info-circle"></i> 以下聯絡方式請至少填寫一項，方便團隊回覆您：</p>
-  <div class="form-row">
-    <div class="form-group third">
-      <label for="email">企業 Email</label>
-      <input type="email" id="email" name="email">
-    </div>
-    <div class="form-group third">
-      <label for="phone">聯絡電話</label>
-      <input type="tel" id="phone" name="phone">
-    </div>
-    <div class="form-group third">
-      <label for="lineId">LINE ID</label>
-      <input type="text" id="lineId" name="lineId">
-    </div>
-  </div>
-</div>
-```
-**功能與用意**：大幅降低表單填寫門檻，提供在地化的 LINE ID 聯絡方式，減輕潛在客戶的隱私壓力，有效提高表單送出轉換率。
 
 ---
 
-## 🎨 2. CSS 樣式與排版優化
+### 2. 首頁 Hero 區塊：視覺比例與無障礙 (a11y) 優化
 
-### 2.1 Hero 區塊視覺遮罩與響應式高度控制
-**修改內容與對比**：
-舊版圖片區塊缺乏遮罩，且高度寫死為 400px。新版增加了深色半透明遮罩，並導入 `vw`/`vh` 控制響應式高度。
+**修改與新增說明：**
+1. [cite_start]頂部圖片區塊 (`.hero-images-top`) 的高度從舊版的固定 `400px` [cite: 878] [cite_start]改為響應式的 `35vw`，並加入 `max-height: 40vh` 限制 [cite: 444, 445]。
+2. [cite_start]大標題加入了 `<span class="visually-hidden">` 隱藏文字 [cite: 46]。
+3. [cite_start]輪播圖 (`.hero-gallery`) 的每張圖片上方新增了 `.qa-caption-box` 文字標籤 [cite: 51, 824]。
 
-**修改前 (舊版 CSS)**：
+**功能與用意：**
+* **視覺比例：** 改用 `vw` 與 `vh` 單位取代固定像素，確保頂部橫幅在各種不同尺寸的螢幕上都能維持完美的長寬比，且不會佔用過多垂直空間。
+* **SEO 與無障礙體驗：** 透過 `.visually-hidden` 隱藏額外的描述文字（例如 "AI Chatbot:"），這些文字在視覺上不可見，但能被搜尋引擎爬蟲與螢幕閱讀器讀取，提升網站無障礙與 SEO 分數。
+* **資訊清晰度：** 為原本純圖片的展示區加上文字標籤（如「即時氣象查詢」），讓使用者一眼就能理解該圖片代表的 AI 功能。
+
+**程式碼 (CSS & HTML 變更)：**
 ```css
+/* 新版 hero.css - 圖片高度響應式調整 */
 .hero-images-top {
-  position: relative;
-  display: flex;
-  width: 100%;
-  height: 400px; /* 預設高度寫死 */
+    /* 舊版：height: 400px; */
+    height: 35vw; 
+    max-height: 40vh; /* 確保最大高度不超過螢幕 40% */
+}
+
+/* 新版 hero.css - 新增無障礙隱藏類別 */
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
 }
 ```
+```html
+<h1 class="hero-title">
+    <span class="visually-hidden">捷庫智能(Jekoo Al)Al Chatbot: </span>Al賽事智慧助理
+</h1>
 
-**修改後 (新版 hero.css)**：
-```css
-.hero-images-top {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 35vw; /* 以視窗寬度為基準 */
-  max-height: 40vh; /* 絕對不超過螢幕高度的 45% */
-  position: relative;
-  overflow: hidden;
-  background-color: var(--primary-blue);
-}
-
-/* 新增：增加深色半透明遮罩 */
-.hero-images-top::after { 
-  content: ''; 
-  position: absolute; 
-  top: 0; left: 0; 
-  width: 100%; height: 100%; 
-  background-color: rgba(0, 0, 0, 0.5); 
-  z-index: 1; 
-}
+<div class="hero-item">
+    <div class="qa-caption-box">
+        <p class="qa-caption-text">即時氣象查詢</p>
+    </div>
+    <img src="images/QA_weather.png" alt="天氣截圖" class="full-img" />
+</div>
 ```
-**功能與用意**：深色遮罩能壓暗背景，讓上方文字更醒目易讀；限制 `max-height: 40vh` 確保在各種裝置下，下方的大標題與截圖一定會露出來，避免使用者不知道要往下捲動。
-
-### 2.2 截圖卡片 RWD 比例控制
-**修改內容與對比**：
-確保四張截圖卡片在響應式縮放時不會變形。
-
-**修改後 (新版 hero.css)**：
-```css
-.hero-item {
-  /* ...其他樣式... */
-  height: 32vh;
-  max-height: 340px;
-  aspect-ratio: 4 / 3; /* 強制維持 4:3 比例 */
-}
-.full-img {
-  width: 100%;
-  height: 100%; 
-  object-fit: contain; /* 確保圖片維持原比例，不被壓扁 */
-  display: block;
-}
-```
-**功能與用意**：透過 `aspect-ratio` 與 `object-fit: contain`，確保無論螢幕多大或多小，手機介面的展示截圖都能保持最完美的比例呈現。
 
 ---
 
-## ⚡ 3. JavaScript 互動與進階邏輯
+### 3. 首頁 Hero 區塊：新增 iOS 無縫線性無限循環跑馬燈 (JS)
 
-### 3.1 基礎網頁互動功能建置
-**修改內容與對比**：
-舊版的 JS 檔案內完全沒有功能。新版實作了平滑滾動、Intersection Observer 捲動淡入動畫、漢堡選單切換與回到頂部按鈕。
+**修改與新增說明：**
+[cite_start]在新版 JS 中，為 `.hero-gallery` 新增了一套完整的線性循環捲動邏輯，包含浮點數精準計算、元素複製 (`cloneNode`)，以及針對觸控裝置的慣性滑動保護機制 [cite: 734-818]。
 
-**修改前 (舊版 JS)**：
+**功能與用意：**
+舊版僅使用 CSS 排版，圖片靜態呈現。為了增加首頁的動態科技感，導入了無限跑馬燈。特別針對 iOS (Safari) 瀏覽器在處理捲軸 `scrollLeft` 時會捨去小數點導致動畫卡頓或破圖的問題，新版 JS 使用獨立變數 `exactScrollLeft` 來強制記錄與同步浮點數，確保在所有裝置上都能實現完美的無縫線性滑動。
+
+**程式碼 (新版 JS 核心邏輯)：**
 ```javascript
-document.addEventListener("DOMContentLoaded", () => {
-});
-```
+// [終極修復版] 支援 iOS 無縫線性無限循環跑馬燈
+const scrollSpeed = 0.8;
+let exactScrollLeft = 0; // iOS 修復核心：用獨立變數精準紀錄浮點數位置
 
-**修改後 (新版 JS 動畫片段)**：
-```javascript
-// 滾動淡入動畫 (Scroll Intersection Observer)
-const observerOptions = { root: null, rootMargin: '0px', threshold: 0.15 };
-const observer = new IntersectionObserver((entries, observer) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.classList.add('visible'); // 加上 CSS 動畫 class
-      observer.unobserve(entry.target);
+function startLinearScroll() {
+    if (!isPaused) {
+        exactScrollLeft += scrollSpeed;
+        gallery.scrollLeft = exactScrollLeft; // 將精準數值賦予瀏覽器
+
+        const firstClone = gallery.querySelector('.clone-item');
+        if (firstClone) {
+            const resetPoint = firstClone.offsetLeft - gallery.firstElementChild.offsetLeft;
+            // 當捲軸剛好滑到複製品的位置時，瞬間把捲軸拉回起點
+            if (gallery.scrollLeft >= resetPoint) {
+                gallery.scrollLeft -= resetPoint;
+                exactScrollLeft -= resetPoint; // 同步重置變數
+            }
+        }
     }
-  });
-}, observerOptions);
-
-const fadeElements = document.querySelectorAll('.fade-in');
-fadeElements.forEach(el => observer.observe(el));
+    animationId = requestAnimationFrame(startLinearScroll);
+}
 ```
 
-### 3.2 表單防呆與 n8n Webhook 串接
-**修改內容與對比**：
-新版 JS 中加入了針對新表單欄位的防呆邏輯，並使用 `fetch` API 將收集到的資料打包為 JSON 發送至自動化工具 n8n 的 Webhook，實現無後端 (Serverless) 的郵件發送系統。
+---
 
-**修改後 (新版 JS 串接片段)**：
+### 4. 全新區塊：新增「標準化導入流程」(`<section id="process">`)
+
+**修改與新增說明：**
+[cite_start]在「痛點解決」與「核心模組」區塊之間，全新插入了一個 ID 為 `process` 的區塊，使用四步驟的網格卡片呈現 [cite: 109, 831]。
+
+**功能與用意：**
+舊版網頁缺乏引導客戶了解合作步驟的資訊。新增此區塊能以具象化的 4 個標準化步驟（需求評估 $\rightarrow$ 知識庫建置 $\rightarrow$ 驗收測試 $\rightarrow$ 服務上線）向 B2B 客戶展示導入過程，並強調「24 小時內完成建置」的商業價值，有效降低客戶對技術導入門檻的疑慮。
+
+**程式碼 (新版 HTML & CSS)：**
+```html
+<section class="process section-padding" id="process">
+    <div class="container">
+        <h2 class="section-title fade-in">
+            標準化導入流程<br>
+            <span style="color: #007bff; font-size: 0.85em;">極速上線! 24 小時內完成專屬AI建置</span>
+        </h2>
+        <div class="process-grid-modern">
+            <div class="process-card-modern fade-in">
+                <div class="step-badge-modern">01</div>
+                <div class="process-icon-modern"><i class="fas fa-handshake"></i></div>
+                <h3>需求評估與資料交付</h3>
+            </div>
+            </div>
+    </div>
+</section>
+```
+```css
+/* 新版 components.css - 現代化流程網格 */
+.process-grid-modern { 
+    display: grid; 
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 2rem; 
+    position: relative; 
+}
+.process-card-modern { 
+    background: #ffffff; 
+    border-radius: 20px; 
+    text-align: center; 
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04); 
+    transition: all 0.4s;
+}
+```
+
+---
+
+### 5. 聯絡表單：B2B 體驗重構與防呆邏輯優化
+
+**修改與新增說明：**
+1. [cite_start]移除了舊版強制的 `<select id="eventSize">` (預估賽事規模) 欄位 [cite: 842]。
+2. [cite_start]新增了 `.contact-method-section`，包含企業 Email、聯絡電話、LINE ID 三個選填欄位 [cite: 201-216]。
+3. [cite_start]JS 表單送出邏輯從「Email 必填」改為「Email、電話、Line ID 三者至少填寫一項」[cite: 670, 973]。
+4. [cite_start]更新了傳遞給 n8n Webhook 的 JSON 格式 (`payload`) [cite: 688, 976]。
+
+**功能與用意：**
+舊版的表單欄位限制較為死板，強制要求填寫 Email 與賽事規模可能會降低潛在客戶的填寫意願。新版表單提供了更彈性的聯絡管道（支援電話與 LINE ID），並利用 JS 防呆確保客戶「至少留下一種聯絡方式」。同時，配合前端欄位的異動，更新了傳送至後端 (n8n Webhook) 的資料結構，確保資料能順利拋轉。
+
+**程式碼 (新版 JS 變更)：**
 ```javascript
-const n8nWebhookUrl = "https://n8n-service-dnng.onrender.com/webhook/contact";
+// 新版防呆邏輯：核心聯絡方式三擇一
+if (!email && !phone && !lineId) {
+    alert("請至少留下Email、聯絡電話或LINE ID其中一種聯絡方式,方便團隊回覆您!");
+    return; // 中斷發送
+}
 
-contactForm.addEventListener('submit', function(e) {
-  e.preventDefault();
-  // ...取得欄位值省略...
-
-  // 核心防呆：Email、電話、Line ID 至少填寫一項
-  if (!email && !phone && !lineId) {
-    alert("請至少留下 Email、聯絡電話 或 LINE ID 其中一種聯絡方式！");
-    return; 
-  }
-
-  // 將資料打包成 JSON 格式
-  const payload = {
+// 新版 n8n Webhook 封裝格式
+const payload = {
     companyName: orgName,
     contactPerson: contactName,
     email: email || "未提供",
     phone: phone || "未提供",
     lineId: lineId || "未提供",
-    requirement: message || "無額外說明"
-  };
-
-  // 實際發送資料到 n8n Webhook
-  fetch(n8nWebhookUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload)
-  }).then(response => {
-    if (response.ok) {
-      alert(`感謝的詢問！捷庫智能團隊已收到您的資訊！`);
-      contactForm.reset();
-    }
-  });
-});
+    requirement: message || "無額外說明",
+    source: "Jekoo Al官方網站"
+};
 ```
 
-### 3.3 [終極修復版] iOS 無縫線性無限循環跑馬燈
-**修改內容與對比**：
-為了解決 iOS Safari 容易吃掉小數點導致動畫卡頓，以及純 CSS 跑馬燈與使用者觸控衝突的問題，新版利用 JS 打造了極其平滑的自定義馬達。
+---
 
-**修改後 (新版 JS 跑馬燈核心修復片段)**：
-```javascript
-// iOS 修復核心：用獨立變數精準紀錄浮點數位置
-let exactScrollLeft = 0;
-const scrollSpeed = 0.8;
+### 6. 全域 UI 優化：社群連結狀態與客製化捲軸
 
-function startLinearScroll() {
-  if (!isPaused) {
-    // 將精準小數點累加到我們的變數中
-    exactScrollLeft += scrollSpeed;
-    // 再把計算好的數值賦予給瀏覽器 (解決 Safari 吃小數點的問題)
-    gallery.scrollLeft = exactScrollLeft;
+**修改與新增說明：**
+1. [cite_start]將頁尾 (Footer) 舊版的純 `<a>` 連結（Facebook, LinkedIn）改為 `<span class="disabled-social">`，並附上 `Coming soon` 標籤 [cite: 231-237, 846]。
+2. [cite_start]在全域 CSS 中加入了 `::-webkit-scrollbar` 客製化滾動條樣式 [cite: 369]。
 
-    // 無縫接軌邏輯：當捲軸滑到複製品位置時，瞬間拉回起點
-    const firstClone = gallery.querySelector('.clone-item');
-    if (firstClone) {
-      const resetPoint = firstClone.offsetLeft - gallery.firstElementChild.offsetLeft;
-      if (gallery.scrollLeft >= resetPoint) {
-        gallery.scrollLeft -= resetPoint;
-        exactScrollLeft -= resetPoint; // 同步重置精準變數
-      }
-    }
-  }
-  animationId = requestAnimationFrame(startLinearScroll);
+**功能與用意：**
+因目前社群平台可能尚未建置完畢，將有效連結改為禁用狀態並加上提示標籤，可避免使用者點擊到無效頁面產生不佳的體驗。此外，全站導入了客製化的極簡風格滾動條，讓網站的整體科技感與細節更加一致。
+
+**程式碼 (新版 HTML & CSS)：**
+```html
+<div class="social-links">
+    <span class="disabled-social" title="尚未開放">
+        <i class="fab fa-facebook"></i>
+        <span class="coming-soon-badge">Coming soon</span>
+    </span>
+</div>
+```
+```css
+/* 新版 global.css - 客製化捲軸 */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { 
+    background: rgba(10, 37, 64, 0.3); 
+    border-radius: 10px; 
 }
 ```
-**功能與用意**：此段邏輯搭配觸控事件 (`touchstart`, `touchend`) 監聽，讓跑馬燈在手機上手動滑動時會自動暫停干預，放開手等待慣性結束後（800 毫秒）再無縫恢復滾動，提供極致流暢且不卡頓的首頁視覺輪播效果。
-*   **回到頂部與手機選單**：確保使用者在閱讀長篇幅介紹或使用手機瀏覽時，擁有良好的導覽操作體驗。
-*   **表單攔截**：阻止表單送出時立刻重新整理頁面，不僅優化了互動體驗，也為後續串接非同步 API（如發送諮詢信件）建立了基礎架構。
+```
